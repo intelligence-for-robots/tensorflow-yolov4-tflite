@@ -63,6 +63,7 @@ def main(_argv):
         else:
             boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
     else:
+        print("yolo-v4")
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         start_time = time.time()
         infer = saved_model_loaded.signatures['serving_default']
@@ -89,6 +90,8 @@ def main(_argv):
     image.show()
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
     cv2.imwrite(FLAGS.output, image)
+    best_box = boxes.numpy()[0,0]
+    print("boxes: " + str(best_box))
     print("inference [secs]: %s" % (end_time - start_time))
 
 if __name__ == '__main__':
