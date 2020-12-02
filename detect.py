@@ -10,6 +10,7 @@ from tensorflow.python.saved_model import tag_constants
 from PIL import Image
 import cv2
 import numpy as np
+import time
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
@@ -45,6 +46,8 @@ def main(_argv):
         images_data.append(image_data)
     images_data = np.asarray(images_data).astype(np.float32)
 
+    start_time = time.time()
+
     if FLAGS.framework == 'tflite':
         interpreter = tf.lite.Interpreter(model_path=FLAGS.weights)
         interpreter.allocate_tensors()
@@ -61,6 +64,7 @@ def main(_argv):
             boxes, pred_conf = filter_boxes(pred[0], pred[1], score_threshold=0.25, input_shape=tf.constant([input_size, input_size]))
     else:
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
+        start_time = time.time()
         infer = saved_model_loaded.signatures['serving_default']
         batch_data = tf.constant(images_data)
         pred_bbox = infer(batch_data)
@@ -78,12 +82,14 @@ def main(_argv):
         score_threshold=FLAGS.score
     )
     pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
+    end_time = time.time()
     image = utils.draw_bbox(original_image, pred_bbox)
     # image = utils.draw_bbox(image_data*255, pred_bbox)
     image = Image.fromarray(image.astype(np.uint8))
     image.show()
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
     cv2.imwrite(FLAGS.output, image)
+    print("inference [secs]: %s" % (end_time - start_time))
 
 if __name__ == '__main__':
     try:
