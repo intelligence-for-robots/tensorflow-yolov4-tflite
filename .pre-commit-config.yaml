@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/asottile/reorder_python_imports
+    rev: v1.8.0
+    hooks:
+      - id: reorder-python-imports
+        args: [--application-directories=src]
+        language_version: python3.8
+  - repo: https://github.com/ambv/black
+    rev: 19.10b0
+    hooks:
+      - id: black
+        language_version: python3.8
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: flake8
+        args: ['--ignore=E203,E266,E501,W503', '--max-line-length=88', '--max-doc-length=88', '--max-complexity=15', '--select=B,C,E,F,W,T4,B9']
+        language_version: python3.8
+
