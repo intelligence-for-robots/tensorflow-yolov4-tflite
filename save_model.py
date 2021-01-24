@@ -15,6 +15,7 @@ flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 
 def save_tf():
   STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
+  print("S {} \nA {}\nN {}\nX {} ".format(STRIDES, ANCHORS, NUM_CLASS, XYSCALE))
 
   input_layer = tf.keras.layers.Input([FLAGS.input_size, FLAGS.input_size, 3])
   feature_maps = YOLO(input_layer, NUM_CLASS, FLAGS.model, FLAGS.tiny)
@@ -46,9 +47,11 @@ def save_tf():
     boxes, pred_conf = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres, input_shape=tf.constant([FLAGS.input_size, FLAGS.input_size]))
     pred = tf.concat([boxes, pred_conf], axis=-1)
   model = tf.keras.Model(input_layer, pred)
+  # model.load_weights("best_model.hdf5")
   utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
   model.summary()
-  model.save(FLAGS.output)
+  # model.save(FLAGS.output)
+  model.save("best_model.hdf5")
 
 def main(_argv):
   save_tf()
