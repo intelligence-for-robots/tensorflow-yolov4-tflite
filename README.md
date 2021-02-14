@@ -2,8 +2,6 @@
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
 ```
-python detect.py --weights ../darknet/data/backup/tf-yolo-v4-416-1800 --size 416 --model yolov4 --image '../darknet/data/obj/1 - 2 171308-176.jpeg'
-
 python save_model.py --weights ../darknet/data/backup/yolo-obj_1800.weights --input_size 416 --model yolov4
 ```
 
